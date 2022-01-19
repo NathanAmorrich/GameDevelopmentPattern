@@ -36,6 +36,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     public class Character : MonoBehaviour
     {
         #region Variables
+        public StateMachine movementSM;
+        public StandingState standing;
+        public DuckingState ducking;
+        public JumpingState jumping;
+
 
 
 #pragma warning disable 0649
@@ -212,6 +217,30 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         #endregion
 
         #region MonoBehaviour Callbacks
+
+        private void Start()
+        {
+            movementSM = new StateMachine();
+
+            standing = new StandingState(this, movementSM);
+            ducking = new DuckingState(this, movementSM);
+            jumping = new JumpingState(this, movementSM);
+
+            movementSM.Initialize(standing);
+        }
+
+        private void Update()
+        {
+            movementSM.CurrentState.HandleInput();
+
+            movementSM.CurrentState.LogicUpdate();
+        }
+
+        private void FixedUpdate()
+        {
+            movementSM.CurrentState.PhysicsUpdate();
+        }
+
 
 
         #endregion
